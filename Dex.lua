@@ -1,4 +1,4 @@
---[[
+	--[[
 
 	Dex Created By Viktor188834 (RU)
 	(GitHub: https://github.com/Viktor188834)
@@ -382,7 +382,7 @@ local ImageLibrary = {
 				img_dark_Rthro = "rbxassetid://102257817675034";
 				img_dark_RthroNarrow = "rbxassetid://128301045443664";
 				img_light_custom = "rbxassetid://81929044397533";
-				
+
 			};
 			AvatarEditor = "rbxassetid://138117814446758";
 			AvatarEditor_LightTheme = "rbxassetid://122621002805434";
@@ -470,7 +470,9 @@ local ImageLibrary = {
 	};
 	SuperMegaIcons = "rbxassetid://130563383277540"
 }
+
 local f = {}
+local ActivedFunctions = {}
 
 self.CTRL_Active = false
 game.UserInputService.InputBegan:Connect(function(i, g)
@@ -576,6 +578,8 @@ local Dex2 = create("TextLabel", {
 	BackgroundColor3 = ColorNow.Thirty;
 	TextColor3 = ColorNow.Conversely;
 	Text = "Dex";
+	Draggable = true;
+	Active = true;
 })
 
 local Dex3 = create("ImageButton", {
@@ -589,7 +593,7 @@ local Dex3 = create("ImageButton", {
 	BackgroundColor3 = ColorNow.Thirty
 })
 
-local Dex4 = create("TextLabel", {
+local Dex4: TextLabel = create("TextLabel", {
 	Parent = Dex1;
 	Size = UDim2.new(0.2, 0, 0, 15);
 	Position = UDim2.new(1, 0, 0.5, 0);
@@ -597,8 +601,15 @@ local Dex4 = create("TextLabel", {
 	BorderSizePixel = 0;
 	TextColor3 = ColorNow.Conversely;
 	BackgroundColor3 = ColorNow.Thirty;
-	Text = "Properties"
+	Text = "Properties";
+	Draggable = true;
+	Active = true;
 })
+
+table.insert(ActivedFunctions, game:GetService("RunService").Heartbeat:Connect(function()
+	DexProp.Position = UDim2.new(0.2, Dex4.AbsolutePosition.X, 0, Dex4.AbsolutePosition.Y+15)
+	DexTree.Position = UDim2.new(0.2, Dex2.AbsolutePosition.X, 0.5, Dex2.AbsolutePosition.Y+15)
+end))
 
 local Dex5 = create("ImageButton", {
 	Parent = Dex4,
@@ -610,6 +621,44 @@ local Dex5 = create("ImageButton", {
 	BorderSizePixel = 0,
 	BackgroundColor3 = ColorNow.Thirty
 })
+
+;(function()
+	local function OnActive()
+		if Dex5 then
+			DexProp:Destroy()
+			Dex4:Destroy()
+			game:GetService("TweenService"):Create(DexTree, TweenInfo.new(0.5, Enum.EasingStyle.Linear), {
+				Size = UDim2.new(0.2,0,1,0), Position = UDim2.new(1, 0, 1, 0)}):Play()
+		else
+			Dex1:Destroy()
+			for i,v in ActivedFunctions do
+				v:Disconnect()
+			end
+		end
+	end
+	Dex5.MouseButton1Down:Connect(OnActive)
+	Dex5.TouchTap:Connect(OnActive)
+end)()
+
+;(function()
+	local function OnActive()
+		if Dex3 then
+			DexTree:Destroy()
+			Dex2:Destroy()
+			game:GetService("TweenService"):Create(DexProp, TweenInfo.new(0.5, Enum.EasingStyle.Linear), {
+				Size = UDim2.new(0.2,0,1,0), Position = UDim2.new(1, 0, 0, 0)}):Play()
+			game:GetService("TweenService"):Create(Dex4, TweenInfo.new(0.5, Enum.EasingStyle.Linear), {
+				Position = UDim2.new(1, 0, 0, -15)}):Play()
+		else
+			Dex1:Destroy()
+			for i,v in ActivedFunctions do
+				v:Disconnect()
+			end
+		end
+	end
+	Dex3.MouseButton1Down:Connect(OnActive)
+	Dex3.TouchTap:Connect(OnActive)
+end)()
 
 local Dex6 = create("ImageButton", {
 	Parent = Dex1;
@@ -636,7 +685,8 @@ local Dex8 = create("UIListLayout", {
 	Wraps = true;
 	HorizontalAlignment = Enum.HorizontalAlignment.Center;
 	VerticalAlignment = Enum.VerticalAlignment.Center;
-	Padding = UDim.new(0, 3)
+	FillDirection = Enum.FillDirection.Horizontal;
+	Padding = UDim.new(0, 3);
 })
 
 ;(function()
@@ -840,6 +890,7 @@ local function Properties(ins: Instance, frame: TextButton)
 		Properties_Text(buttons,ins,i,"Attributes",false)
 	end
 end
+
 self.ID = 0
 self.Selections = {}
 
@@ -883,7 +934,7 @@ local function Path_Doing(parents: Instance, MainFrameParents: TextButton)
 	end
 	MainFrame:SetAttribute("Dopolnitelno", MainFrame.Position.Y.Offset//20)
 	MainFrame:SetAttribute("row", any.Row)
-	game:GetService("RunService").Heartbeat:Connect(function()
+	table.insert(ActivedFunctions, game:GetService("RunService").Heartbeat:Connect(function()
 		local a = false
 		for i,v in self.Selections do
 			if v.Parent == parents then
@@ -900,7 +951,7 @@ local function Path_Doing(parents: Instance, MainFrameParents: TextButton)
 				parents:SetAttribute(i,v)
 			end
 		end
-	end)
+	end))
 	local Icon = create("ImageLabel", {
 		Parent = MainFrame;
 		Size = UDim2.new(0, 15, 0, 15);
@@ -1146,5 +1197,9 @@ Left_Frame.AddButton("Refresh Dex", function()
 		Path_Doing(v)
 	end
 end, f:get_image("Refresh"))
+
+Left_Frame.AddButton("Settings", function()
+	
+end, f:get_image("GameSettings"))
 
 return nil
