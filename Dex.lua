@@ -46,7 +46,7 @@ self.Row = 0
 
 local ColorNow = self.Colors.Black
 
-local ImageLibrary = --loadstring(game:HttpGet("https://github.com/Viktor188834/New-Dex/blob/main/ImageLibrarys.lua"))() or 
+local ImageLibrary = loadstring(game:HttpGet("https://github.com/Viktor188834/New-Dex/blob/main/ImageLibrarys.lua"))() or 
 	require(game:GetService("ReplicatedStorage"):WaitForChild("ImagesLibrary"))
 local f = {}
 
