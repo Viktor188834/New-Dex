@@ -43,8 +43,9 @@ self.Colors.White = {
 }
 
 self.Row = 0
+self.Settings = {}
 
-local ColorNow = self.Colors.Black
+self.Settings.Dex_color = self.Colors.Black
 
 local ImageLibrary = {
 	Accessory = "rbxassetid://86663019679941",
@@ -515,6 +516,12 @@ local events = {
 			Name = "UpdateTree";
 		});
 	});
+	ChangedColor = create("BindableEvent", {
+		Parent = create("Folder", {
+			Parent = Events_Folder;
+			Name = "ChangedColor"
+		})
+	});
 }
 
 local Dex1 = create("ScreenGui", {
@@ -530,10 +537,13 @@ local DexTree: ScrollingFrame = create("ScrollingFrame", {
 	Size = UDim2.new(0.2, 0, 0.5, 0), 
 	Position = UDim2.new(1, 0, 0.5, 0), 
 	AnchorPoint = Vector2.new(1, 1),
-	BackgroundColor3 = ColorNow.Main,
+	BackgroundColor3 = self.Settings.Dex_color.Secondary,
 	ScrollBarThickness = 3,
 	BorderSizePixel = 0,
 })
+table.insert(ActivedFunctions, events.ChangedColor.Event:Connect(function()
+	DexTree.BackgroundColor3 = self.Settings.Dex_color.Secondary
+end))
 
 function f:get_image(imageName: string)
 	if ImageLibrary[imageName] then
@@ -565,22 +575,30 @@ local DexProp = create("ScrollingFrame", {
 	AnchorPoint = Vector2.new(1, 0),
 	BorderSizePixel = 0,
 	ScrollBarImageTransparency = 1,
-	BackgroundColor3 = ColorNow.Main
+	BackgroundColor3 = self.Settings.Dex_color.Secondary
 })
 
-local Dex2 = create("TextLabel", {
+table.insert(ActivedFunctions, events.ChangedColor.Event:Connect(function()
+	DexProp.BackgroundColor3 = self.Settings.Dex_color.Secondary
+end))
+
+local Dex2: TextLabel = create("TextLabel", {
 	Parent = Dex1,
 	Name = "TopBar",
 	Size = UDim2.new(0.2, 0, 0, 15),
 	Position = UDim2.new(1, 0, 0, 0),
 	BorderSizePixel = 0,
 	AnchorPoint = Vector2.new(1, 1),
-	BackgroundColor3 = ColorNow.Thirty;
-	TextColor3 = ColorNow.Conversely;
+	BackgroundColor3 = self.Settings.Dex_color.Thirty;
+	TextColor3 = self.Settings.Dex_color.Conversely;
 	Text = "Dex";
 	Draggable = true;
 	Active = true;
 })
+table.insert(ActivedFunctions, events.ChangedColor.Event:Connect(function()
+	Dex2.BackgroundColor3 = self.Settings.Dex_color.Main
+	Dex2.TextColor3 = self.Settings.Dex_color.Main
+end))
 
 local Dex3 = create("ImageButton", {
 	Parent = Dex2,
@@ -590,8 +608,12 @@ local Dex3 = create("ImageButton", {
 	AnchorPoint = Vector2.new(0, 1),
 	Image = ImageLibrary.Close,
 	BorderSizePixel = 0,
-	BackgroundColor3 = ColorNow.Thirty
+	BackgroundColor3 = self.Settings.Dex_color.Thirty
 })
+
+table.insert(ActivedFunctions, events.ChangedColor.Event:Connect(function()
+	Dex3.BackgroundColor3 = self.Settings.Dex_color.Thirty
+end))
 
 local Dex4: TextLabel = create("TextLabel", {
 	Parent = Dex1;
@@ -599,12 +621,17 @@ local Dex4: TextLabel = create("TextLabel", {
 	Position = UDim2.new(1, 0, 0.5, 0);
 	AnchorPoint = Vector2.new(1, 0);
 	BorderSizePixel = 0;
-	TextColor3 = ColorNow.Conversely;
-	BackgroundColor3 = ColorNow.Thirty;
+	TextColor3 = self.Settings.Dex_color.Conversely;
+	BackgroundColor3 = self.Settings.Dex_color.Thirty;
 	Text = "Properties";
 	Draggable = true;
 	Active = true;
 })
+
+events.ChangedColor.Event:Connect(function()
+	Dex4.BackgroundColor3 = self.Settings.Dex_color.Thirty
+	Dex4.TextColor3 = self.Settings.Dex_color.Conversely
+end)
 
 table.insert(ActivedFunctions, game:GetService("RunService").Heartbeat:Connect(function()
 	DexProp.Position = UDim2.new(0.2, Dex4.AbsolutePosition.X, 0, Dex4.AbsolutePosition.Y+15)
@@ -619,8 +646,12 @@ local Dex5 = create("ImageButton", {
 	AnchorPoint = Vector2.new(0, 1),
 	Image = ImageLibrary.Close,
 	BorderSizePixel = 0,
-	BackgroundColor3 = ColorNow.Thirty
+	BackgroundColor3 = self.Settings.Dex_color.Thirty
 })
+
+table.insert(ActivedFunctions, events.ChangedColor.Event:Connect(function()
+	Dex5.BackgroundColor3 = self.Settings.Dex_color.Thirty
+end))
 
 ;(function()
 	local function OnActive()
@@ -631,6 +662,7 @@ local Dex5 = create("ImageButton", {
 				Size = UDim2.new(0.2,0,1,0), Position = UDim2.new(1, 0, 1, 0)}):Play()
 		else
 			Dex1:Destroy()
+			Events_Folder:Destroy()
 			for i,v in ActivedFunctions do
 				v:Disconnect()
 			end
@@ -651,6 +683,7 @@ end)()
 				Position = UDim2.new(1, 0, 0, -15)}):Play()
 		else
 			Dex1:Destroy()
+			Events_Folder:Destroy()
 			for i,v in ActivedFunctions do
 				v:Disconnect()
 			end
@@ -667,18 +700,26 @@ local Dex6 = create("ImageButton", {
 	Size = UDim2.new(0, 25, 0, 25);
 	Image = f:get_image("ArrowRight");
 	BorderSizePixel = 0;
-	BackgroundColor3 = ColorNow.Secondary
+	BackgroundColor3 = self.Settings.Dex_color.Secondary
 })
+
+table.insert(ActivedFunctions, events.ChangedColor.Event:Connect(function()
+	Dex6.BackgroundColor3 = self.Settings.Dex_color.Secondary
+end))
 
 local Dex7 = create("Frame", {
 	Parent = Dex6;
 	AnchorPoint = Vector2.new(0, 0.5);
 	Position = UDim2.new(1, 5, 0.5, 0);
 	Size = UDim2.new(0, 0, 3, 0);
-	BackgroundColor3 = ColorNow.Secondary;
+	BackgroundColor3 = self.Settings.Dex_color.Secondary;
 	BorderSizePixel = 0;
 	Visible = false;
 })
+
+table.insert(ActivedFunctions, events.ChangedColor.Event:Connect(function()
+	Dex7.BackgroundColor3 = self.Settings.Dex_color.Secondary
+end))
 
 local Dex8 = create("UIListLayout", {
 	Parent = Dex7;
@@ -711,13 +752,17 @@ Left_Frame.AddButton = function(text: string, callback, Icon: string)
 	local TextLabel = create("TextLabel", {
 		Parent = image;
 		Text = text;
-		TextColor3 = ColorNow.Conversely;
+		TextColor3 = self.Settings.Dex_color.Conversely;
 		BackgroundTransparency = 1;
 		TextStrokeTransparency = 0;
-		TextStrokeColor3 = ColorNow.Main;
+		TextStrokeColor3 = self.Settings.Dex_color.Main;
 		Size = UDim2.new(1, 0, 0,1, 0);
 		Position = UDim2.new(0, 0, 1, 0);
 	})
+	table.insert(ActivedFunctions, events.ChangedColor.Event:Connect(function()
+		TextLabel.TextStrokeColor3 = self.Settings.Dex_color.Main
+		TextLabel.TextColor3 = self.Settings.Dex_color.Conversely
+	end))
 	image.MouseButton1Down:Connect(callback);
 	image.TouchTap:Connect(callback)
 	Dex7.Size = UDim2.new(0, 50, 0, (#Dex7:GetChildren()-1)*50)
@@ -756,12 +801,16 @@ local function Properties_Text(buttons,ins: Instance,i,v,isprop)
 			Position = UDim2.new(0, 0, 0, #DexProp:GetChildren()*25+15);
 			Parent = DexProp;
 			BorderSizePixel = 0;
-			BackgroundColor3 = ColorNow.Secondary;
+			BackgroundColor3 = self.Settings.Dex_color.Secondary;
 			RichText = true;
 			TextSize = 10;
-			TextColor3 = ColorNow.Conversely;
+			TextColor3 = self.Settings.Dex_color.Conversely;
 			Text = v
 		})
+		events.ChangedColor.Event:Connect(function()
+			buttons[v].TextColor3 = self.Settings.Dex_color.Conversely
+			buttons[v].BackgroundColor3 = self.Settings.Dex_color.Secondary
+		end)
 	end
 	local t = create("TextLabel", {
 		Position = UDim2.new(0, 0, 0, #DexProp:GetChildren()*25+15);
@@ -772,9 +821,12 @@ local function Properties_Text(buttons,ins: Instance,i,v,isprop)
 		RichText = true;
 		TextXAlignment = Enum.TextXAlignment.Left;
 		TextSize = 10;
-		TextColor3 = ColorNow.Conversely;
+		TextColor3 = self.Settings.Dex_color.Conversely;
 		Text = tostring(i)
 	});
+	table.insert(ActivedFunctions, events.ChangedColor.Event:Connect(function()
+		t.TextColor3 = self.Settings.Dex_color.Conversely
+	end))
 	local readonly = false
 	if isprop then
 		local old = ins[i];
@@ -821,8 +873,11 @@ local function Properties_Text(buttons,ins: Instance,i,v,isprop)
 			Size = UDim2.new(1, 0, 0, 25);
 			AnchorPoint = Vector2.new(0, 0);
 			ClearTextOnFocus = false;
-			TextColor3 = ColorNow.Conversely
+			TextColor3 = self.Settings.Dex_color.Conversely
 		})
+		table.insert(ActivedFunctions, events.ChangedColor.Event:Connect(function()
+			textbox.TextColor3 = self.Settings.Dex_color.Conversely
+		end))
 		if isprop then
 			textbox.Text = ins[i]
 		else
@@ -848,8 +903,11 @@ local function Properties_Text(buttons,ins: Instance,i,v,isprop)
 			Size = UDim2.new(1, 0, 0, 25);
 			AnchorPoint = Vector2.new(0, 0);
 			ClearTextOnFocus = false;
-			TextColor3 = ColorNow.Conversely
+			TextColor3 = self.Settings.Dex_color.Conversely
 		})
+		table.insert(ActivedFunctions, events.ChangedColor.Event:Connect(function()
+			textbox.TextColor3 = self.Settings.Dex_color.Conversely
+		end))
 		if isprop then
 			textbox.Text = ins[i]
 		else
@@ -899,7 +957,6 @@ function f:On_Double_Click(ins: Instance, mainframe: TextButton)
 end
 
 local function Path_Doing(parents: Instance, MainFrameParents: TextButton)
-	if parents.Name == "Dex___Viktor188834" then return end
 	local any = {
 		Childrens_Did = false;
 		Childrens_Buttons = {};
@@ -912,7 +969,7 @@ local function Path_Doing(parents: Instance, MainFrameParents: TextButton)
 	local MainFrame: TextButton = create("TextButton", {
 		Parent = DexTree;
 		Size = UDim2.new(1, -(16*(self.Row+1)), 0, 20),
-		BackgroundColor3 = ColorNow.Secondary;
+		BackgroundTransparency = 1;
 		BorderSizePixel = 0;
 		Name = parents.Name;
 		AnchorPoint = Vector2.new(1, 0);
@@ -970,7 +1027,7 @@ local function Path_Doing(parents: Instance, MainFrameParents: TextButton)
 		BorderSizePixel = 0;
 		BackgroundTransparency = 1;
 		RichText = true;
-		TextColor3 = ColorNow.Conversely;
+		TextColor3 = self.Settings.Dex_color.Conversely;
 	})
 	local Show = create("ImageButton", {
 		Parent = MainFrame;
@@ -981,6 +1038,9 @@ local function Path_Doing(parents: Instance, MainFrameParents: TextButton)
 		BackgroundTransparency = 1;
 		Image = ImageLibrary.ArrowDown;
 	})
+	table.insert(ActivedFunctions, events.ChangedColor.Event:Connect(function()
+		Text.TextColor3 = self.Settings.Dex_color.Conversely
+	end))
 	parents.Destroying:Connect(function()
 		MainFrame:Destroy()
 		events.UpdateTree:Fire(MainFrame:GetAttribute("Dopolnitelno"), -1, any.Row)
@@ -1027,14 +1087,14 @@ local function Path_Doing(parents: Instance, MainFrameParents: TextButton)
 		if any.selected == true then
 			MainFrame.BackgroundColor3 = Color3.fromRGB(14, 123, 190)
 		else
-			MainFrame.BackgroundColor3 = ColorNow.Thirty
+			MainFrame.BackgroundColor3 = self.Settings.Dex_color.Thirty
 		end
 	end)
 	MainFrame.MouseLeave:Connect(function()
 		if any.selected == true then
 			MainFrame.BackgroundColor3 = Color3.fromRGB(14, 123, 190)
 		else
-			MainFrame.BackgroundColor3 = ColorNow.Secondary
+			MainFrame.BackgroundColor3 = self.Settings.Dex_color.Secondary
 		end
 	end)
 	MainFrame.MouseButton1Down:Connect(function(x,y)
@@ -1046,7 +1106,7 @@ local function Path_Doing(parents: Instance, MainFrameParents: TextButton)
 			MainFrame.BackgroundColor3 = Color3.fromRGB(14, 123, 190)
 		else
 			for i,v in self.Selections do
-				v.Frame.BackgroundColor3 = ColorNow.Secondary
+				v.Frame.BackgroundColor3 = self.Settings.Dex_color.Secondary
 			end
 			self.Selections = {{Parent = parents, Frame = MainFrame}}
 			MainFrame.BackgroundColor3 = Color3.fromRGB(14, 123, 190)
@@ -1104,7 +1164,7 @@ local function Path_Doing(parents: Instance, MainFrameParents: TextButton)
 			Position = UDim2.new(0, mouse.X, 0, mouse.Y);
 			AnchorPoint = Vector2.new(0.5, 0.5);
 			Size = UDim2.new(0, 70, 0, 0);
-			BackgroundColor3 = ColorNow.Thirty;
+			BackgroundColor3 = self.Settings.Dex_color.Thirty;
 			BorderSizePixel = 0;
 		})
 		local corner = create("UICorner", {
@@ -1117,6 +1177,9 @@ local function Path_Doing(parents: Instance, MainFrameParents: TextButton)
 			HorizontalAlignment = Enum.HorizontalAlignment.Right;
 			VerticalAlignment = Enum.VerticalAlignment.Center;
 		})
+		table.insert(ActivedFunctions, events.ChangedColor.Event:Connect(function()
+			Frame_Right_Mouse.TextColor3 = self.Settings.Dex_color.Thirty
+		end))
 		local Mini_Frame = {}
 		Mini_Frame.In = {}
 		Mini_Frame.Add = function(text: string, image: string, response)
@@ -1128,7 +1191,7 @@ local function Path_Doing(parents: Instance, MainFrameParents: TextButton)
 				BackgroundTransparency = 1;
 				Text = text;
 				TextXAlignment = Enum.TextXAlignment.Left;
-				TextColor3 = ColorNow.Conversely;
+				TextColor3 = self.Settings.Dex_color.Conversely;
 				RichText = true;
 				BorderSizePixel = 0;
 			})
@@ -1160,8 +1223,7 @@ local function Path_Doing(parents: Instance, MainFrameParents: TextButton)
 			
 		end)
 		
-		wait(3)
-		Frame_Right_Mouse:Destroy()
+		game:GetService("Debris"):AddItem(Frame_Right_Mouse, 3)
 	end)
 	events.UpdateTree.Event:Connect(function(d, childrens: number, row)
 		if d < MainFrame:GetAttribute("Dopolnitelno") or any.Row < row and d < MainFrame:GetAttribute("Dopolnitelno") then
